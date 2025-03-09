@@ -383,6 +383,16 @@ class TestMIDIExportModes(unittest.TestCase):
             if msg.type == "note_on":
                 self.assertEqual(t, 3)
                 break
+        part.add(score.GraceNote(grace_type="grace", step='c', octave=4), 0, 1)
+        part.add(score.GraceNote(grace_type="grace", step='c', octave=4), 1, 1)
+        mid = export_and_read(scr, omit_grace_notes=True)
+        t = 0
+        count_noteon = 0
+        for msg in mid.tracks[0]:
+            t += msg.time
+            if msg.type == "note_on":
+                count_noteon += 1
+        assert count_noteon == 2
 
 
 def n_items_per_part_voice(pg, cls):

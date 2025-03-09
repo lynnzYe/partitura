@@ -128,7 +128,7 @@ def save_performance_midi(
                 "`performance_data` should be a `Performance`, a `PerformedPart`,"
                 " or a list of  `PerformedPart` instances"
             )
-        performed_parts = performed_parts
+        performed_parts = list(performance_data)
 
     else:
         raise ValueError(
@@ -277,6 +277,7 @@ def save_score_midi(
     velocity: int = 64,
     anacrusis_behavior: str = "shift",
     minimum_ppq: int = 0,
+    omit_grace_notes=False
 ) -> Optional[MidiFile]:
     """Write data from Part objects to a MIDI file
 
@@ -334,6 +335,10 @@ def save_score_midi(
         it will be doubled until it is above the threshold. This is useful
         because some libraries like miditok require a certain minimum ppq to
         work properly.
+    omit_grace_notes : bool, optional
+        Whether to skip grace notes during generation. By default it will keep
+        all grace notes. The onset time will be identical to that of the note
+        it/they associate with.
 
     Returns
     -------
@@ -485,6 +490,8 @@ def save_score_midi(
         for note in notes:
             # key is a tuple (part_group, part, voice) that will be
             # converted into a (track, channel) pair.
+            if omit_grace_notes and isinstance(note, score.GraceNote):
+                continue
             key = (pg, part, note.voice)
             events[key][to_ppq(note.start.t)].append(
                 Message("note_on", note=note.midi_pitch)
