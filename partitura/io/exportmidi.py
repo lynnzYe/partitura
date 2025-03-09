@@ -128,6 +128,7 @@ def save_performance_midi(
                 "`performance_data` should be a `Performance`, a `PerformedPart`,"
                 " or a list of  `PerformedPart` instances"
             )
+        # performed_parts = performed_parts
         performed_parts = list(performance_data)
 
     else:
@@ -338,7 +339,7 @@ def save_score_midi(
     omit_grace_notes : bool, optional
         Whether to skip grace notes during generation. By default it will keep
         all grace notes. The onset time will be identical to that of the note
-        it/they associate with.
+        it/they associate with (main note).
 
     Returns
     -------
